@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url("/static/bg.png");
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: rgba(166, 234, 216, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            color: #333;
+        }
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .text-success {
+            color: green;
+        }
+        .text-danger {
+            color: red;
+        }
+        .recommendations {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .recommendations ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .recommendations li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .back-btn, .signout-btn {
+            background-color: #2c662e;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Verdana', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .section-result {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .section-result p {
+            margin: 5px 0;
+        }
+        .section-good {
+            color: green;
+        }
+        .section-bad {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Health Prediction Result</h1>
+        <div class="result {{ prediction_class }}">
+            {{ prediction_text | safe }}
+        </div>
+        
+        {% if 'bad' in section_results.values() %}
+        <div class="section-result">
+            <p>Section-wise results:</p>
+            {% for section, status in section_results.items() %}
+                <p>{{ section }} - <span class="section-{{ status }}">{{ status }}</span></p>
+                {% if status == "bad" %}
+                    <p>Reason: {{ recommendations[section] }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if recommendations %}
+        <div class="recommendations">
+            <h3>Recommendations to improve health:</h3>
+            <ul>
+                {% for recommendation in recommendations %}
+                <li>{{ recommendation }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="btn-container">
+            <form action="/index" method="post" style="display:inline;">
+                <input type="hidden" name="employee_id" value="{{ employee_id }}">
+                <button type="submit" class="back-btn">Back</button>
+            </form>
+            <form action="/signout" method="post" style="display:inline;">
+                <button type="submit" class="signout-btn">Sign Out</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
